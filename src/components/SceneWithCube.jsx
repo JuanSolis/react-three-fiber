@@ -2,9 +2,8 @@ import React, { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
-function Scene() {
+function SceneWithCube() {
   const mountRef = useRef(null);
-
   useEffect(() => {
     // Scene
     const scene = new THREE.Scene();
@@ -30,40 +29,47 @@ function Scene() {
     controls.enableDamping = true;
 
     // Cubo
-    const cube = new THREE.Mesh(
-      new THREE.BoxGeometry(1, 1, 1),
-      new THREE.MeshBasicMaterial({
-        color: 0xff0000,
-        transparent: true,
-        opacity: 0.3,
-        wireframe: true,
-      })
-    );
-
-    scene.add(cube);
-
-    // Sphere
 
     // Texture Loader
     const textureLoader = new THREE.TextureLoader();
-    const matcap = textureLoader.load("./textures/mapcat2.png");
-    const geometrySphere = new THREE.SphereGeometry(1, 32, 16);
-    const materialSphere = new THREE.MeshMatcapMaterial({
-      matcap: matcap,
-    });
-    const sphere = new THREE.Mesh(geometrySphere, materialSphere);
-    sphere.position.set(0, 1.5, 0);
-    scene.add(sphere);
+    const map = textureLoader.load(
+      "./textures/groundDirt/Ground_Dirt_008_baseColor.jpg"
+    );
 
-    // TorusKnot
+    const AOmap = textureLoader.load(
+      "./textures/groundDirt/Ground_Dirt_008_ambientOcclusion.jpg"
+    );
 
-    const geometryTorusKnot = new THREE.TorusKnotGeometry(0.5, 0.18, 100, 16);
-    const materialTorusKnot = new THREE.MeshNormalMaterial({
-      flatShading: true,
+    const roaghnessMap = textureLoader.load(
+      "./textures/groundDirt/Ground_Dirt_008_roughness.jpg"
+    );
+
+    const normalMap = textureLoader.load(
+      "./textures/groundDirt/Ground_Dirt_008_normal.jpg"
+    );
+
+    const heightMap = textureLoader.load(
+      "./textures/groundDirt/Ground_Dirt_008_height.png"
+    );
+
+    const geometry = new THREE.BoxGeometry(1, 1, 1, 250, 250, 250);
+    const material = new THREE.MeshStandardMaterial({
+      map: map,
+      aoMap: AOmap,
+      roaghnessMap: roaghnessMap,
+      normalMap: normalMap,
+      displacementMap: heightMap,
+      displacementScale: 0.05,
     });
-    const torusKnot = new THREE.Mesh(geometryTorusKnot, materialTorusKnot);
-    torusKnot.position.set(0, -1.5, 0);
-    scene.add(torusKnot);
+
+    const cube = new THREE.Mesh(geometry, material);
+
+    scene.add(cube);
+
+    // Light
+
+    const AO = new THREE.AmbientLight();
+    scene.add(AO);
 
     // Renderer the scene
     const animate = () => {
@@ -90,4 +96,4 @@ function Scene() {
   );
 }
 
-export default Scene;
+export default SceneWithCube;
