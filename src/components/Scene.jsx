@@ -32,14 +32,25 @@ function Scene() {
     // Cubo
     const cube = new THREE.Mesh(
       new THREE.BoxGeometry(1, 1, 1),
-      new THREE.MeshBasicMaterial()
+      new THREE.MeshBasicMaterial({
+        color: 0xff0000,
+        transparent: true,
+        opacity: 0.3,
+        wireframe: true,
+      })
     );
 
     scene.add(cube);
 
     // Sphere
-    const geometrySphere = new THREE.SphereGeometry(0.8, 32, 16);
-    const materialSphere = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+
+    // Texture Loader
+    const textureLoader = new THREE.TextureLoader();
+    const matcap = textureLoader.load("./textures/mapcat2.png");
+    const geometrySphere = new THREE.SphereGeometry(1, 32, 16);
+    const materialSphere = new THREE.MeshMatcapMaterial({
+      matcap: matcap,
+    });
     const sphere = new THREE.Mesh(geometrySphere, materialSphere);
     sphere.position.set(0, 1.5, 0);
     scene.add(sphere);
@@ -47,7 +58,9 @@ function Scene() {
     // TorusKnot
 
     const geometryTorusKnot = new THREE.TorusKnotGeometry(0.5, 0.18, 100, 16);
-    const materialTorusKnot = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+    const materialTorusKnot = new THREE.MeshNormalMaterial({
+      flatShading: true,
+    });
     const torusKnot = new THREE.Mesh(geometryTorusKnot, materialTorusKnot);
     torusKnot.position.set(0, -1.5, 0);
     scene.add(torusKnot);
