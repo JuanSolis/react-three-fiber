@@ -16,7 +16,7 @@ function SceneWithCube() {
       1000
     );
 
-    camera.position.z = 12;
+    camera.position.z = 15;
     scene.add(camera);
 
     // Renderer
@@ -40,7 +40,7 @@ function SceneWithCube() {
       "./textures/groundDirt/Ground_Dirt_008_ambientOcclusion.jpg"
     );
 
-    const roaghnessMap = textureLoader.load(
+    const roughnessMap = textureLoader.load(
       "./textures/groundDirt/Ground_Dirt_008_roughness.jpg"
     );
 
@@ -56,21 +56,43 @@ function SceneWithCube() {
     const material = new THREE.MeshStandardMaterial({
       map: map,
       aoMap: AOmap,
-      roaghnessMap: roaghnessMap,
+      roughnessMap: roughnessMap,
       normalMap: normalMap,
       displacementMap: heightMap,
-      displacementScale: 0.05,
+      displacementScale: 0.08,
     });
 
     const cube = new THREE.Mesh(geometry, material);
-
+    cube.scale.set(3, 3, 3);
     scene.add(cube);
 
     // Light
 
-    const AO = new THREE.AmbientLight();
+    const AO = new THREE.AmbientLight(0xffffff, 0.5);
     scene.add(AO);
 
+    const pointLight = new THREE.PointLight(0xffffff, 1.3);
+    pointLight.position.y = 2;
+    // scene.add(pointLight);
+
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1.3);
+    directionalLight.position.set(5, 5, 5);
+    scene.add(directionalLight);
+
+    // Environment Light
+
+    const environmentMap = new THREE.CubeTextureLoader();
+    const envMap = environmentMap.load([
+      "./textures/envmap/px.png",
+      "./textures/envmap/nx.png",
+      "./textures/envmap/py.png",
+      "./textures/envmap/ny.png",
+      "./textures/envmap/pz.png",
+      "./textures/envmap/nz.png",
+    ]);
+
+    scene.environment = envMap;
+    scene.background = envMap;
     // Renderer the scene
     const animate = () => {
       controls.update();
