@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 class ThreeExperience {
   constructor() {
@@ -7,12 +8,12 @@ class ThreeExperience {
 
     /* Camera */
     this.camera = new THREE.PerspectiveCamera(
-      60,
+      24,
       window.innerWidth / window.innerHeight,
       0.1,
       100
     );
-    this.camera.position.set(0, 1, 8);
+    this.camera.position.set(5, 5, 5);
     this.scene = new THREE.Scene();
     this.scene.add(this.camera);
 
@@ -27,12 +28,39 @@ class ThreeExperience {
     this.renderer.setAnimationLoop(this.render.bind(this));
     this.container.appendChild(this.renderer.domElement);
 
-    /* Initial Mesh */
-    const box = new THREE.Mesh(
-      new THREE.BoxGeometry(1, 1, 1),
-      new THREE.MeshBasicMaterial({ color: 0xff0000 })
+    // Loading Manager
+
+    const loadingManager = new THREE.LoadingManager(
+      () => {},
+      (itemURL, itemsToLoad, itemsLoaded) => {
+        console.log((itemsToLoad / itemsLoaded) * 100);
+      },
+      () => {}
     );
-    this.scene.add(box);
+    // Load 3d
+
+    this.gltfLoader = new GLTFLoader(loadingManager);
+    this.gltfLoader.load(
+      "./Models/space_helmet/scene.gltf",
+      (gltf) => {
+        this.scene.add(gltf.scene);
+      },
+      () => {
+        console.log("Progress");
+      },
+      () => {
+        console.log("error");
+      }
+    );
+
+    // Lights
+
+    const light1 = new THREE.DirectionalLight(0xffffff, 1);
+    light1.position.set(6, 6, 6);
+    this.scene.add(light1);
+
+    const al = new THREE.AmbientLight(0xffffff);
+    this.scene.add(al);
 
     /* Controls */
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
